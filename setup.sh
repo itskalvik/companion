@@ -1,5 +1,13 @@
 #!/bin/bash
 
+if [ $(id -u) -ne 0 ]; then
+   echo >&2 "Must be run as root"
+   exit 1
+fi
+
+set -e
+set -x
+
 cd /home/nvidia
 
 sudo apt-get update
@@ -56,4 +64,3 @@ echo "DAEMON=/usr/local/bin/$NAME" >> /etc/init.d/mavproxy
 sudo chmod +x /etc/init.d/mavproxy
 sudo chown root:root /etc/init.d/mavproxy
 sudo update-rc.d mavproxy defaults
-
