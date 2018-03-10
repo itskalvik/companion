@@ -49,18 +49,16 @@ popd
 
 sudo apt-get install -y screen
 
-sudo cp /etc/init.d/skeleton /etc/init.d/mavproxy
+sudo sed -i -e "$i \sleep 10\nsudo -H -u nvidia /bin/bash -c '~/companion/autostart_mavproxy.sh'" rc.local
 
-sudo sed -i '/DESC/d' /etc/init.d/mavproxy
-sudo sed -i '/DAEMON/d' /etc/init.d/mavproxy
+git clone https://github.com/kdkalvik/companion.git /home/nvidia/companion
 
-echo '''DAEMON_ARGS="--master=/dev/serial/by-id/usb-3D_Robotics_PX4_FMU_v2.x_0-if00,115200 --load-module='GPSInput,DepthOutput' --source-system=200 --cmd='set heartbeat 0' --out udpin:localhost:9000 --out udpbcast:192.168.1.6:14550 --daemon"''' >> /etc/init.d/mavproxy
-echo "NAME=mavproxy.py" >> /etc/init.d/mavproxy
-echo 'DESC="Mavproxy based mavlink to wifi gateway"' >> /etc/init.d/mavproxy
-echo "Provides: mavgateway" >> /etc/init.d/mavproxy
-echo "Short-Description: Mavlink to UDP gateway service" >> /etc/init.d/mavproxy
-echo "DAEMON=/usr/local/bin/$NAME" >> /etc/init.d/mavproxy
 
+
+<<<<<<< HEAD
+
+=======
 sudo chmod +x /etc/init.d/mavproxy
 sudo chown root:root /etc/init.d/mavproxy
 sudo update-rc.d mavproxy defaults
+>>>>>>> d0fe087cd8528d7314a7e15ee51594aa13c8ebca
