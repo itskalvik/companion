@@ -12,11 +12,12 @@ sudo apt-add-repository universe -y
 sudo apt-get update
 
 sudo apt-get install git -y
-sudo apt-get install -y python-dev python-pip python-libxml2  python-wxgtk3.0 python-matplotlib python-pygame
+sudo apt-get install -y python-dev python-opencv python-pip python-libxml2  python-wxgtk3.0 python-matplotlib python-pygame
 sudo apt-get install -y python-setuptools python-dev build-essential
 sudo apt-get install -y libxml2-dev libxslt1-dev
 sudo pip install pip -U
 sudo pip install future
+sudo pip install pyserial -U
 
 sudo apt-get purge modemmanager -y
 sudo adduser $USER dialout
@@ -36,7 +37,7 @@ popd
 git clone https://github.com/bluerobotics/MAVProxy.git /home/nvidia/mavproxy
 
 pushd mavproxy
-sudo python setup.py build install --user
+sudo python setup.py build install
 popd
 
 sudo apt-get install -y screen
