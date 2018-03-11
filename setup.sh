@@ -1,22 +1,14 @@
 #!/bin/bash
 
-if [ $(id -u) -ne 0 ]; then
-   echo >&2 "Must be run as root"
-   exit 1
-fi
-
-set -e
-set -x
-
 cd /home/nvidia
+
+sudo apt-get purge libreoffice-*
 
 sudo apt-get update
 sudo apt-get upgrade -y 
-sudo apt-get autoremove -y
-sudo apt-get autoclean
 
-sudo apt-get install software-properties-common
-sudo apt-add-repository universe
+sudo apt-get install software-properties-common -y
+sudo apt-add-repository universe -y
 sudo apt-get update
 
 sudo apt-get install git -y
@@ -44,21 +36,15 @@ popd
 git clone https://github.com/bluerobotics/MAVProxy.git /home/nvidia/mavproxy
 
 pushd mavproxy
-python setup.py build install --user
+sudo python setup.py build install --user
 popd
 
 sudo apt-get install -y screen
 
-sudo sed -i -e "$i \sleep 10\nsudo -H -u nvidia /bin/bash -c '~/companion/autostart_mavproxy.sh'" rc.local
+sudo sed -i -e '$i \sleep 10\n' /etc/rc.local
+sudo sed -i -e '$i \sudo -H -u nvidia /bin/bash -c '~/companion/autostart_mavproxy.sh'\n' /etc/rc.local
+
+sudo apt-get autoremove -y
+sudo apt-get autoclean -y
 
 git clone https://github.com/kdkalvik/companion.git /home/nvidia/companion
-
-
-
-<<<<<<< HEAD
-
-=======
-sudo chmod +x /etc/init.d/mavproxy
-sudo chown root:root /etc/init.d/mavproxy
-sudo update-rc.d mavproxy defaults
->>>>>>> d0fe087cd8528d7314a7e15ee51594aa13c8ebca
