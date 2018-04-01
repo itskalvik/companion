@@ -13,10 +13,11 @@ LOG=$MAVPROXY_HOME/logs/autostart_mavproxy.log
 set -e
 set -x
     
+echo
+
 date
-set
 
 cd $MAVPROXY_HOME
 screen -L -dm -S "$TITLE" -s /bin/bash $SCRIPT
-) >$LOG 2>&1
+) >>$LOG 2>&1
 exit 0
