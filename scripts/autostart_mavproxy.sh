@@ -6,7 +6,8 @@ set -x
 TITLE=mavproxy
 MAVPROXY_HOME=$HOME/companion
 SCRIPT=$MAVPROXY_HOME/scripts/start_mavproxy_telem_splitter.sh
-LOG=$MAVPROXY_HOME/logs/autostart_mavproxy.log
+SCREEN_LOG=$MAVPROXY_HOME/logs/screen_mavproxy.log
+LOG=$MAVPROXY_HOME/logs/mavproxy.log
 
 # autostart for mavproxy
 (
@@ -18,6 +19,9 @@ echo
 date
 
 cd $MAVPROXY_HOME
-screen -L -dm -S "$TITLE" -s /bin/bash $SCRIPT
-) >>$LOG 2>&1
+screen -dm -S "$TITLE" -s /bin/bash $SCRIPT
+echo >> $LOG && date >> $LOG
+screen -S "$TITLE" -X logfile $LOG
+screen -S "$TITLE" -X log
+) >>$SCREEN_LOG 2>&1
 exit 0

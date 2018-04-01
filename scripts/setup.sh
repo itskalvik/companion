@@ -49,5 +49,7 @@ sudo sed -i -e '$i \sudo -H -u nvidia /bin/bash -c '/home/nvidia/companion/scrip
 sudo sh -c "echo 'SUBSYSTEM==\"tty\", ATTRS{idVendor}==\"26ac\", ATTRS{idProduct}==\"0011\", SYMLINK+=\"pixhawk\"' > /etc/udev/rules.d/99-usb-serial.rules"
 sudo udevadm trigger
 
+mkdir $HOME/companion/logs
+
 sudo apt-get autoremove -y
 sudo apt-get autoclean -y

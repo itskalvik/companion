@@ -6,7 +6,8 @@ set -x
 TITLE=gstreamer
 GSTREAMER_HOME=$HOME/companion
 SCRIPT=$GSTREAMER_HOME/scripts/start_gstreamer.sh
-LOG=$GSTREAMER_HOME/logs/autostart_gstreamer.log
+SCREEN_LOG=$GSTREAMER_HOME/logs/screen_gstreamer.log
+LOG=$GSTREAMER_HOME/logs/gstreamer.log
 
 # autostart for mavproxy
 (
@@ -18,6 +19,9 @@ echo
 date
 
 cd $GSTREAMER_HOME
-screen -L -dm -S "$TITLE" -s /bin/bash $SCRIPT
-) >> $LOG 2>&1
+screen -dm -S "$TITLE" -s /bin/bash $SCRIPT
+echo >> $LOG && date >> $LOG
+screen -S "$TITLE" -X logfile $LOG
+screen -S "$TITLE" -X log
+) >> $SCREEN_LOG 2>&1
 exit 0
