@@ -1,7 +1,7 @@
--v 
+-v
 v4l2src device=/dev/video0 do-timestamp=true !
-video/x-raw,width=1920,height=1080,framerate=30/1 !
+video/x-raw,width=640,height=480,framerate=30/1 !
 x264enc pass=qual quantizer=20 tune=zerolatency !
-queue !
+h264parse !
 rtph264pay config-interval=10 pt=96 !
-udpsink host=192.168.2.1 port=5600
+udpsink host=192.168.2.2 port=5600
