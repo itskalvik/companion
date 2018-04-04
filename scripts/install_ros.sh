@@ -1,5 +1,6 @@
 #!/bin/bash
 
+#Make sure script was run with root user privileges
 if [[ $UID != 0 ]]; then
 	echo "This script require root privileges!" 1>&2
 	exit 1
