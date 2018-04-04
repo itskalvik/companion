@@ -4,7 +4,8 @@
 # is available to a companion computer and external GCSs via UDP. This broadcasts so that
 # multiple IP addresses can receive the telemetry.
 
-# For PixHawk or other connected via USB on Raspberry Pi
+# For PixHawk connected via USB on Raspberry Pi
+
 cd $HOME
 # Determine if the param file exists.  If not, use default.
 if [ -e mavproxy.param ]; then
