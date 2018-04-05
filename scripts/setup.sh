@@ -27,7 +27,7 @@ get_repo "$HOME/companion" "https://github.com/kdkalvik/companion.git"
 
 if [ "$1" != "update" ]; then
 	#Remove liberoffice 
-	sudo apt-get purge libreoffice-*
+	sudo apt-get purge libreoffice-* -y
 fi
 
 #update and upgrade
