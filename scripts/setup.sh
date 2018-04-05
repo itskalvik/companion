@@ -94,7 +94,7 @@ if [ "$1" != "update" ]; then
 	sudo echo "\tnetmask 255.255.255.0" >> /etc/network/interfaces
 
 	#install ros
-	sudo ./install_ros.sh
+	sudo $HOME/companion/scripts/install_ros.sh
 fi
 
 sudo apt-get autoremove -y
