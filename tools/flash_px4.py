@@ -7,10 +7,6 @@ import sys
 import signal
 from optparse import OptionParser
 
-def timeout(signum, frame):
-    print 'Timed out waiting for firmware on stdin!'
-    exit(1)
-
 parser = OptionParser()
 parser.add_option("--file", dest="file", default=None, help="Load from file")
 (options,args) = parser.parse_args()

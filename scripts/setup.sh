@@ -24,35 +24,41 @@ get_repo(){
 #get companion repo
 get_repo "$HOME/companion" "https://github.com/kdkalvik/companion.git"
 
-#Remove liberoffice 
-sudo apt-get purge libreoffice-*
+if [ $1 -ne "update" ]; then
+	#Remove liberoffice 
+	sudo apt-get purge libreoffice-*
+fi
 
 #update and upgrade
 sudo apt-get update
 sudo apt-get upgrade -y 
 
-#add universe repo
-sudo apt-get install software-properties-common -y
-sudo apt-add-repository universe -y
-sudo apt-get update
+if [ $1 -ne "update" ]; then
+	#add universe repo
+	sudo apt-get install software-properties-common -y
+	sudo apt-add-repository universe -y
+	sudo apt-get update
 
-#install required packages
-sudo apt-get install git screen -y
-sudo apt-get install -y python-dev python-opencv python-pip python-libxml2  python-wxgtk3.0 python-matplotlib python-pygame
-sudo apt-get install -y python-setuptools python-dev build-essential
-sudo apt-get install -y libxml2-dev libxslt1-dev
-sudo apt-get install gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly
-sudo pip install pip -U
-sudo pip install future
-sudo pip install pyserial -U
+	#install required packages
+	sudo apt-get install git screen openssh-server nano -y
+	sudo apt-get install -y python-dev python-opencv python-pip python-libxml2  python-wxgtk3.0 python-matplotlib python-pygame
+	sudo apt-get install -y python-setuptools python-dev build-essential
+	sudo apt-get install -y libxml2-dev libxslt1-dev
+	sudo apt-get install gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly
+	sudo pip install pip -U
+	sudo pip install future
+	sudo pip install pyserial -U
 
-#remove modemmanager interferes with serial devices
-sudo apt-get purge modemmanager -y
-sudo adduser $USER dialout
+	#remove modemmanager interferes with serial devices
+	sudo apt-get purge modemmanager -y
+	sudo adduser $USER dialout
 
-#update environment variables
-echo "export PATH=$PATH:$HOME/.local/bin" >> ~/.bashrc
-source ~/.bashrc
+	#update environment variables
+	echo "export PATH=$PATH:$HOME/.local/bin" >> ~/.bashrc
+	echo "export PATH=$PATH:$HOME/companion/scripts" >> ~/.bashrc
+	echo "export PATH=$PATH:$HOME/companion/tools" >> ~/.bashrc
+	source ~/.bashrc
+fi
 
 #install mavlink
 get_repo "$HOME/mavlink" "https://github.com/mavlink/mavlink.git"
@@ -69,17 +75,26 @@ pushd mavproxy
 sudo python setup.py build install
 popd
 
-#update rc.local to start scripts on boot
-sudo sed -i -e '$i \sleep 10\n' /etc/rc.local
-sudo sed -i -e '$i \sudo -H -u nvidia /bin/bash -c '/home/nvidia/companion/scripts/autostart_mavproxy.sh'\n' /etc/rc.local
-sudo sed -i -e '$i \sudo -H -u nvidia /bin/bash -c '/home/nvidia/companion/scripts/autostart_gstreamer.sh'\n' /etc/rc.local
+if [ $1 -ne "update" ]; then
+	#update rc.local to start scripts on boot
+	sudo sed -i -e '$i \sleep 10\n' /etc/rc.local
+	sudo sed -i -e '$i \sudo -H -u nvidia /bin/bash -c '/home/nvidia/companion/scripts/autostart_mavproxy.sh'\n' /etc/rc.local
+	sudo sed -i -e '$i \sudo -H -u nvidia /bin/bash -c '/home/nvidia/companion/scripts/autostart_gstreamer.sh'\n' /etc/rc.local
 
-#create symbolic link for pixhawk in /dev
-sudo sh -c "echo 'SUBSYSTEM==\"tty\", ATTRS{idVendor}==\"26ac\", ATTRS{idProduct}==\"0011\", SYMLINK+=\"pixhawk\"' > /etc/udev/rules.d/99-usb-serial.rules"
-sudo udevadm trigger
+	#create symbolic link for pixhawk in /dev
+	sudo sh -c "echo 'SUBSYSTEM==\"tty\", ATTRS{idVendor}==\"26ac\", ATTRS{idProduct}==\"0011\", SYMLINK+=\"pixhawk\"' > /etc/udev/rules.d/99-usb-serial.rules"
+	sudo udevadm trigger
 
-#install ros
-sudo ./install_ros.sh
+	#setup static ip address 192.168.2.2
+	sudo echo "\n## ROV direct connection" >> /etc/network/interfaces
+	sudo echo "auto eth0" >> /etc/network/interfaces
+	sudo echo "iface eth0 inet static" >> /etc/network/interfaces
+	sudo echo "\taddress 192.168.2.2" >> /etc/network/interfaces
+	sudo echo "\tnetmask 255.255.255.0" >> /etc/network/interfaces
+
+	#install ros
+	sudo ./install_ros.sh
+fi
 
 sudo apt-get autoremove -y
 sudo apt-get autoclean -y
