@@ -87,11 +87,12 @@ if [ "$1" != "update" ]; then
 	sudo udevadm trigger
 
 	#setup static ip address 192.168.2.2
-	sudo echo "\n## ROV direct connection" >> /etc/network/interfaces
+	sudo echo "" >> /etc/network/interfaces
+	sudo echo "## ROV direct connection" >> /etc/network/interfaces
 	sudo echo "auto eth0" >> /etc/network/interfaces
 	sudo echo "iface eth0 inet static" >> /etc/network/interfaces
-	sudo echo "\taddress 192.168.2.2" >> /etc/network/interfaces
-	sudo echo "\tnetmask 255.255.255.0" >> /etc/network/interfaces
+	sudo echo "    address 192.168.2.2" >> /etc/network/interfaces
+	sudo echo "    netmask 255.255.255.0" >> /etc/network/interfaces
 
 	#install ros
 	sudo $HOME/companion/scripts/install_ros.sh
