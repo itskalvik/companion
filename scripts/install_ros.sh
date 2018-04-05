@@ -58,3 +58,4 @@ wget https://raw.githubusercontent.com/mavlink/mavros/master/mavros/scripts/inst
 
 chmod a+x install_geographiclib_datasets.sh
 sudo ./install_geographiclib_datasets.sh
+suro rm install_geographiclib_datasets.sh

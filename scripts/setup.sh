@@ -26,6 +26,7 @@ get_repo(){
 get_repo "$HOME/companion" "https://github.com/kdkalvik/companion.git"
 if [ ! -d $HOME/companion/logs ];then
 	mkdir $HOME/companion/logs
+	sudo chmod a+rw $HOME/companion/logs
 fi
 
 
