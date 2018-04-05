@@ -24,6 +24,10 @@ get_repo(){
 
 #get companion repo
 get_repo "$HOME/companion" "https://github.com/kdkalvik/companion.git"
+if [ ! -d $HOME/companion/logs ];then
+	mkdir $HOME/companion/logs
+fi
+
 
 if [ "$1" != "update" ]; then
 	#Remove liberoffice 
@@ -78,10 +82,14 @@ popd
 
 if [ "$1" != "update" ]; then
 	#update rc.local to start scripts on boot
-	sudo sed -i -e '$i \sleep 10\n' /etc/rc.local
-	sudo sed -i -e '$i \sudo -H -u nvidia /bin/bash -c '/home/nvidia/companion/scripts/autostart_mavproxy.sh'\n' /etc/rc.local
-	sudo sed -i -e '$i \sudo -H -u nvidia /bin/bash -c '/home/nvidia/companion/scripts/autostart_gstreamer.sh'\n' /etc/rc.local
-
+	S0="sleep 10"
+	S1="sudo -H -u nvidia /bin/bash -c '/home/nvidia/companion/scripts/autostart_mavproxy.sh'"
+	S2="sudo -H -u nvidia /bin/bash -c '/home/nvidia/companion/scripts/autostart_gstreamer.sh'"
+	
+	perl -pe "s%^exit 0%$S0\\n\\nexit 0%" -i /etc/rc.local
+	perl -pe "s%^exit 0%$S1\\n\\nexit 0%" -i /etc/rc.local
+	perl -pe "s%^exit 0%$S2\\n\\nexit 0%" -i /etc/rc.local
+	
 	#create symbolic link for pixhawk in /dev
 	sudo sh -c "echo 'SUBSYSTEM==\"tty\", ATTRS{idVendor}==\"26ac\", ATTRS{idProduct}==\"0011\", SYMLINK+=\"pixhawk\"' > /etc/udev/rules.d/99-usb-serial.rules"
 	sudo udevadm trigger
