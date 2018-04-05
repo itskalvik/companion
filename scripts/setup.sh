@@ -24,7 +24,7 @@ get_repo(){
 #get companion repo
 get_repo "$HOME/companion" "https://github.com/kdkalvik/companion.git"
 
-if [ $1 -ne "update" ]; then
+if [ "$1" != "update" ]; then
 	#Remove liberoffice 
 	sudo apt-get purge libreoffice-*
 fi
@@ -33,7 +33,7 @@ fi
 sudo apt-get update
 sudo apt-get upgrade -y 
 
-if [ $1 -ne "update" ]; then
+if [ "$1" != "update" ]; then
 	#add universe repo
 	sudo apt-get install software-properties-common -y
 	sudo apt-add-repository universe -y
@@ -75,7 +75,7 @@ pushd mavproxy
 sudo python setup.py build install
 popd
 
-if [ $1 -ne "update" ]; then
+if [ "$1" != "update" ]; then
 	#update rc.local to start scripts on boot
 	sudo sed -i -e '$i \sleep 10\n' /etc/rc.local
 	sudo sed -i -e '$i \sudo -H -u nvidia /bin/bash -c '/home/nvidia/companion/scripts/autostart_mavproxy.sh'\n' /etc/rc.local
