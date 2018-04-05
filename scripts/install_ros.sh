@@ -38,7 +38,7 @@ mkdir -p ~/catkin_ws/src
 sudo chmod a+rw ~/catkin_ws
 sudo chmod a+rw ~/catkin_ws/src
 cd ~/catkin_ws/
-source ~/.bashrc
+source /opt/ros/kinetic/setup.bash
 catkin_make
 
 #setup environment
