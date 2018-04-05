@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+set -x
 
 #Make sure script was run with root user privileges
 if [[ $UID != 0 ]]; then
@@ -18,7 +19,7 @@ sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C
 sudo apt-get update
 
 #install ros base
-sudo apt-get install ros-kinetic-ros-base
+sudo apt-get install ros-kinetic-ros-base -y
 
 #initialize rosdep
 sudo rosdep init
@@ -29,7 +30,7 @@ echo "source /opt/ros/kinetic/setup.bash" >> ~/.bashrc
 source ~/.bashrc
 
 #install dependencies
-sudo apt-get install python-rosinstall python-rosinstall-generator python-wstool build-essential
+sudo apt-get install python-rosinstall python-rosinstall-generator python-wstool build-essential -y
 
 #setup catkin workspace
 cd $HOME
@@ -42,13 +43,13 @@ echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc
 source ~/.bashrc
 
 #install mavros
-sudo apt-get install ros-kinetic-mavros ros-kinetic-mavros-extras ros-kinetic-mavros-msgs
+sudo apt-get install ros-kinetic-mavros ros-kinetic-mavros-extras ros-kinetic-mavros-msgs -y
 
 #install libgeographic
 cd $HOME
 
-sudo apt-get install libgeographic-dev
-sudo apt-get install geographiclib-tools
+sudo apt-get install libgeographic-dev -y
+sudo apt-get install geographiclib-tools -y
 
 wget https://raw.githubusercontent.com/mavlink/mavros/master/mavros/scripts/install_geographiclib_datasets.sh
 
