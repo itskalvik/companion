@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+set -x
 
 #Make sure script was run with root user privileges
 if [[ $UID != 0 ]]; then
