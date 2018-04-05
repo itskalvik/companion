@@ -46,9 +46,9 @@ if [ "$1" != "update" ]; then
 	sudo apt-get install -y python-setuptools python-dev build-essential
 	sudo apt-get install -y libxml2-dev libxslt1-dev
 	sudo apt-get install -y gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly
-	sudo pip install pip -U
-	sudo pip install future
-	sudo pip install pyserial -U
+	sudo -H pip install pip -U
+	sudo -H pip install future
+	sudo -H pip install pyserial -U
 
 	#remove modemmanager interferes with serial devices
 	sudo apt-get purge modemmanager -y
