@@ -41,11 +41,11 @@ if [ "$1" != "update" ]; then
 	sudo apt-get update
 
 	#install required packages
-	sudo apt-get install git screen openssh-server nano -y
+	sudo apt-get install -y git screen openssh-server nano
 	sudo apt-get install -y python-dev python-opencv python-pip python-libxml2  python-wxgtk3.0 python-matplotlib python-pygame
 	sudo apt-get install -y python-setuptools python-dev build-essential
 	sudo apt-get install -y libxml2-dev libxslt1-dev
-	sudo apt-get install gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly
+	sudo apt-get install -y gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly
 	sudo pip install pip -U
 	sudo pip install future
 	sudo pip install pyserial -U
