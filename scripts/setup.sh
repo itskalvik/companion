@@ -3,12 +3,6 @@
 set -e
 set -x
 
-#Make sure script was run with root user privileges
-if [[ $UID != 0 ]]; then
-	echo "This script require root privileges!" 1>&2
-	exit 1
-fi
-
 #Function to clone repo if it doesnt exist and update repo if it exists
 get_repo(){
 	if [ -d $1 ]
@@ -26,7 +20,6 @@ get_repo(){
 get_repo "$HOME/companion" "https://github.com/kdkalvik/companion.git"
 if [ ! -d $HOME/companion/logs ];then
 	mkdir $HOME/companion/logs
-	sudo chmod a+rw $HOME/companion/logs
 fi
 
 
@@ -104,7 +97,7 @@ if [ "$1" != "update" ]; then
 	sudo echo "    netmask 255.255.255.0" >> /etc/network/interfaces
 
 	#install ros
-	sudo $HOME/companion/scripts/install_ros.sh
+	$HOME/companion/scripts/install_ros.sh
 fi
 
 sudo apt-get autoremove -y
