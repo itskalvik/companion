@@ -1,7 +1,7 @@
 #!/bin/bash
 
-set -e
-set -x
+#set -e
+#set -x
 
 #Function to clone repo if it doesnt exist and update repo if it exists
 get_repo(){
@@ -9,20 +9,36 @@ get_repo(){
 	then
 		cd $1
 		git reset --hard origin/master
-		git pull origin master
-		cd ..
+		git fetch origin master
+		flag=$(git status | grep "behind" | wc -l)
+		cd $HOME
+		if [ $flag -gt 0 ];then
+			return -2
+		else
+			return 0
 	else
 		git clone $2 $1
+		return -1
 	fi
 }
 
 #get companion repo
-get_repo "$HOME/companion" "https://github.com/kdkalvik/companion.git"
+get_repo $HOME/companion https://github.com/kdkalvik/companion.git
+
+#if changes were made in remote repo, update repo and run new setup script
+if [ $? -eq -2 ];then
+	cd $HOME/companion
+	git pull origin master
+	$HOME/companion/scripts/setup.sh $1
+	exit 0
+fi
+
+#create logs folder if not there
 if [ ! -d $HOME/companion/logs ];then
 	mkdir $HOME/companion/logs
 fi
 
-
+#run only if update flag was not set
 if [ "$1" != "update" ]; then
 	#Remove liberoffice 
 	sudo apt-get purge libreoffice-* -y
@@ -32,6 +48,7 @@ fi
 sudo apt-get update
 sudo apt-get upgrade -y 
 
+#run only if update flag was not set
 if [ "$1" != "update" ]; then
 	#add universe repo
 	sudo apt-get install software-properties-common -y
@@ -40,10 +57,11 @@ if [ "$1" != "update" ]; then
 
 	#install required packages
 	sudo apt-get install -y git screen openssh-server nano
+	sudo apt-get install -y gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly
 	sudo apt-get install -y python-dev python-opencv python-pip python-libxml2  python-wxgtk3.0 python-matplotlib python-pygame
 	sudo apt-get install -y python-setuptools python-dev build-essential
 	sudo apt-get install -y libxml2-dev libxslt1-dev
-	sudo apt-get install -y gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly
+	
 	sudo -H pip install pip -U
 	sudo -H pip install future
 	sudo -H pip install pyserial -U
@@ -59,21 +77,26 @@ if [ "$1" != "update" ]; then
 	source ~/.bashrc
 fi
 
-#install mavlink
+#install if remote was updated or clones for the first time
 get_repo "$HOME/mavlink" "https://github.com/mavlink/mavlink.git"
-pushd mavlink
-git submodule init && git submodule update --recursive
-pushd pymavlink
-sudo python setup.py build install
-popd
-popd
+if [ $? -lt 0 ];then
+	pushd mavlink
+	git submodule init && git submodule update --recursive
+	pushd pymavlink
+	sudo python setup.py build install
+	popd
+	popd
+fi
 
-#install mavproxy
+#install if remote was updated or clones for the first time
 get_repo "$HOME/mavproxy" "https://github.com/ArduPilot/MAVProxy.git"
-pushd mavproxy
-sudo python setup.py build install
-popd
+if [ $? -lt 0 ];then
+	pushd mavproxy
+	sudo python setup.py build install
+	popd
+fi
 
+#run only if update flag was not set
 if [ "$1" != "update" ]; then
 	#update rc.local to start scripts on boot
 	S0="sleep 10"
