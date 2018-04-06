@@ -1,12 +1,43 @@
 #!/bin/bash
 
-#set -e
-#set -x
+#Make sure script is not run as root user
+if [ "$UID" = "0" ];then
+	echo "Don't Run script as 'root' user account"
+	exit -1
+fi
 
+#Make sure script is run from 'nvidia' user account
+if [ "$USER" != "nvidia" ];then
+	echo "Run script from 'nvidia' user account"
+	exit -1
+fi
+
+#Print usage/help page
+if [ "$1" != "update" ] && [ "$1" != "install" ];then
+	clear
+
+	bold=$(tput bold)
+	normal=$(tput sgr0)
+	
+	echo "${bold}NAME${normal}"
+	echo -e "\tsetup.sh - Setup package to setup Nvidia Jetson TX1/TX2 as companion \n\tboard for Pixhawk."
+	echo ""
+	echo "${bold}USAGE${normal}"
+	echo -e "\tUnless the -h, or --help option is given, one of the commands below\n\tmust be present."
+	echo ""
+	echo "${bold}install${normal}"
+	echo -e "\tUsed only once when setting up the board for the first time."
+	echo ""
+	echo "${bold}update${normal}"
+	echo -e "\tUsed to update all packages needed to run the jetson as a companion\n\tboard. It also updates the packages built from source if any changes\n\twere made to the remote repo"
+	echo ""
+	
+	exit 0
+fi
+	
 #Function to clone repo if it doesnt exist and update repo if it exists
 get_repo(){
-	if [ -d $1 ]
-	then
+	if [ -d $1 ];then
 		cd $1
 		git reset --hard origin/master
 		git fetch origin master
@@ -16,6 +47,7 @@ get_repo(){
 			return -2
 		else
 			return 0
+		fi
 	else
 		git clone $2 $1
 		return -1
@@ -23,7 +55,7 @@ get_repo(){
 }
 
 #get companion repo
-get_repo $HOME/companion https://github.com/kdkalvik/companion.git
+get_repo "$HOME/companion" "https://github.com/kdkalvik/companion.git"
 
 #if changes were made in remote repo, update repo and run new setup script
 if [ $? -eq -2 ];then
