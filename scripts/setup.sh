@@ -98,7 +98,7 @@ if [ "$1" != "update" ]; then
 	sudo -H pip install future
 	sudo -H pip install pyserial -U
 
-	#remove modemmanager interferes with serial devices
+	#remove modemmanager interferes with serial devices and add user to dialout to get access to serial devices
 	sudo apt-get purge modemmanager -y
 	sudo adduser $USER dialout
 

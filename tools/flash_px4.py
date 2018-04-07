@@ -1,22 +1,19 @@
 #!/usr/bin/python -u
 
 import os
-from urllib2 import urlopen
 import time
 import sys
-import signal
-from optparse import OptionParser
 
-parser = OptionParser()
-parser.add_option("--file", dest="file", default=None, help="Load from file")
-(options,args) = parser.parse_args()
-
-try:
-    print("Attempting upload from file %s") % options.file
-    open(options.file)
-except Exception as e:
-    print("Error opening file %s: %s") % (options.file, e)
-    exit(1)          
+if (len(sys.argv) != 2):
+	print "Error: Need 1 argument for flash_px4.\nUsage: flash_px4.py <file path of firmware file>" 
+	exit(1)
+else:
+	try:
+		print("Attempting upload from file %s") % str(sys.argv[1])
+		open(str(sys.argv[1]))
+	except Exception as e:
+		print("Error opening file %s: %s") % (str(sys.argv[1]), e)
+		exit(1)          
                 
 # Stop screen session with mavproxy
 print "Stopping mavproxy"
@@ -24,8 +21,8 @@ os.system("screen -X -S mavproxy quit")
 
 # Flash Pixhawk
 print "Flashing Pixhawk..."
-if options.file is not None:
-    if(os.system("python -u /home/nvidia/companion/tools/px_uploader.py --port /dev/pixhawk '%s'" % options.file) != 0):
+if str(sys.argv[1]) is not None:
+    if(os.system("python -u px_uploader.py --port /dev/pixhawk '%s'" % str(sys.argv[1])) != 0):
                 print "Error flashing pixhawk!"
                 exit(1)
 
