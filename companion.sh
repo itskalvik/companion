@@ -1,7 +1,6 @@
 #!/bin/bash
 
 set -e
-set -x
 
 #Make sure script is not run as root user
 if [ "$UID" = "0" ];then
@@ -67,7 +66,7 @@ get_repo "$HOME/companion" "https://github.com/kdkalvik/companion.git"
 if [ $? -eq -2 ];then
 	cd $HOME/companion
 	git pull origin master
-	$HOME/companion/scripts/setup.sh $1
+	$HOME/companion/companion.sh $1
 	exit 0
 fi
 
@@ -110,7 +109,7 @@ if [ "$1" != "update" ]; then
 
 	#update environment variables
 	echo "export PATH=$PATH:$HOME/.local/bin" >> ~/.bashrc
-	echo "export PATH=$PATH:$HOME/companion/scripts" >> ~/.bashrc
+	echo "export PATH=$PATH:$HOME/companion" >> ~/.bashrc
 	echo "export PATH=$PATH:$HOME/companion/tools" >> ~/.bashrc
 	source ~/.bashrc
 fi
