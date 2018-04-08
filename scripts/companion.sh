@@ -2,7 +2,7 @@
 
 #Make sure script is not run as root user
 if [ "$UID" = "0" ];then
-	echo "Root privileges are not required for running companion."
+	echo "Don't run the script with root preivilages."
 	exit -1
 fi
 

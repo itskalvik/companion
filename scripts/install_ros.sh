@@ -1,7 +1,21 @@
 #!/bin/bash
 
-set -e
-set -x
+#set -e
+#set -x
+
+#Make sure script is not run as root user
+if [ "$UID" = "0" ];then
+	echo "Root privileges are not required for running install_ros."
+	exit -1
+fi
+
+#Function to update file if changes are not there
+update_file(){
+	grep "$1" $2
+	if [ $? != 0 ];then
+		echo "$1" >> $2
+	fi
+}
 
 #setup sources.list
 sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
@@ -16,11 +30,12 @@ sudo apt-get update
 sudo apt-get install ros-kinetic-ros-base -y
 
 #initialize rosdep
+sudo rm /etc/ros/rosdep/sources.list.d/20-default.list
 sudo rosdep init
 rosdep update
 
 #setup environment
-echo "source /opt/ros/kinetic/setup.bash" >> ~/.bashrc
+update_file "source /opt/ros/kinetic/setup.bash" ~/.bashrc
 source ~/.bashrc
 
 #install dependencies
@@ -28,13 +43,15 @@ sudo apt-get install python-rosinstall python-rosinstall-generator python-wstool
 
 #setup catkin workspace
 cd $HOME
-mkdir -p ~/catkin_ws/src
-cd ~/catkin_ws/
-source /opt/ros/kinetic/setup.bash
-catkin_make
+if [ ! -d $HOME/catkin_ws/src];then
+	mkdir -p $HOME/catkin_ws/src
+	cd ~/catkin_ws/
+	source /opt/ros/kinetic/setup.bash
+	catkin_make
+fi
 
 #setup environment
-echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc
+update_file "source ~/catkin_ws/devel/setup.bash" ~/.bashrc
 source ~/.bashrc
 
 #install mavros
