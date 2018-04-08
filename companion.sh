@@ -140,9 +140,9 @@ if [ "$1" != "update" ]; then
 	S1="sudo -H -u nvidia /bin/bash -c '/home/nvidia/companion/scripts/autostart_mavproxy.sh'"
 	S2="sudo -H -u nvidia /bin/bash -c '/home/nvidia/companion/scripts/autostart_gstreamer.sh'"
 	
-	perl -pe "s%^exit 0%$S0\\n\\nexit 0%" -i /etc/rc.local
-	perl -pe "s%^exit 0%$S1\\n\\nexit 0%" -i /etc/rc.local
-	perl -pe "s%^exit 0%$S2\\n\\nexit 0%" -i /etc/rc.local
+	sudo perl -pe "s%^exit 0%$S0\\n\\nexit 0%" -i /etc/rc.local
+	sudo perl -pe "s%^exit 0%$S1\\n\\nexit 0%" -i /etc/rc.local
+	sudo perl -pe "s%^exit 0%$S2\\n\\nexit 0%" -i /etc/rc.local
 	
 	#create symbolic link for pixhawk in /dev
 	sudo sh -c "echo 'SUBSYSTEM==\"tty\", ATTRS{idVendor}==\"26ac\", ATTRS{idProduct}==\"0011\", SYMLINK+=\"pixhawk\"' > /etc/udev/rules.d/99-usb-serial.rules"
