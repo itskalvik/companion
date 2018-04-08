@@ -67,6 +67,7 @@ get_repo(){
 	else
 		git clone $2 $1
 		if [ $? != 0 ];then
+			echo "Can't clone $1 repo"
 			exit -1
 		fi
 		return -1
@@ -80,7 +81,7 @@ get_repo "$HOME/companion" "https://github.com/kdkalvik/companion.git"
 if [ $? -eq -2 ];then
 	cd $HOME/companion
 	git pull origin master
-	$HOME/companion/companion.sh $1
+	$HOME/companion/scripts/companion.sh $1
 	exit 0
 fi
 
@@ -128,7 +129,7 @@ fi
 
 #install if remote was updated or cloned for the first time
 get_repo "$HOME/mavlink" "https://github.com/bluerobotics/mavlink.git"
-if [ $? -lt 0 ];then
+if [ $? != 0 ];then
 	pushd mavlink
 	git pull origin master
 	git submodule init && git submodule update --recursive
@@ -140,7 +141,7 @@ fi
 
 #install if remote was updated or clones for the first time
 get_repo "$HOME/mavproxy" "https://github.com/bluerobotics/MAVProxy.git"
-if [ $? -lt 0 ];then
+if [ $? != 0 ];then
 	pushd mavproxy
 	git pull origin master
 	sudo python setup.py build install
