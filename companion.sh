@@ -37,6 +37,22 @@ if [ "$1" != "update" ] && [ "$1" != "install" ];then
 	exit 0
 fi
 	
+#Function to update file if changes are not there
+update_file(){
+	grep "$1" $2
+	if [ $? != 0 ];then
+		echo "$1" >> $2
+	fi
+}
+
+#Function to update file as root user if changes are not there
+sudo_update_file(){
+	grep "$1" $2
+	if [ $? != 0 ];then
+		sudo sh -c "echo '$1' >> $2"
+	fi
+}
+
 #Function to clone repo if it doesnt exist and update repo if it exists
 get_repo(){
 	if [ -d $1 ];then
@@ -108,9 +124,7 @@ if [ "$1" != "update" ]; then
 	sudo adduser $USER dialout
 
 	#update environment variables
-	echo "export PATH=$PATH:$HOME/.local/bin" >> ~/.bashrc
-	echo "export PATH=$PATH:$HOME/companion" >> ~/.bashrc
-	echo "export PATH=$PATH:$HOME/companion/tools" >> ~/.bashrc
+	update_file "export PATH=$PATH:$HOME/.local/bin:$HOME/companion/scripts:$HOME/companion/tools" ~/.bashrc
 	source ~/.bashrc
 fi
 
@@ -118,6 +132,7 @@ fi
 get_repo "$HOME/mavlink" "https://github.com/bluerobotics/mavlink.git"
 if [ $? -lt 0 ];then
 	pushd mavlink
+	git pull origin master
 	git submodule init && git submodule update --recursive
 	pushd pymavlink
 	sudo python setup.py build install
@@ -129,6 +144,7 @@ fi
 get_repo "$HOME/mavproxy" "https://github.com/bluerobotics/MAVProxy.git"
 if [ $? -lt 0 ];then
 	pushd mavproxy
+	git pull origin master
 	sudo python setup.py build install
 	popd
 fi
@@ -136,25 +152,27 @@ fi
 #run only if update flag was not set
 if [ "$1" != "update" ]; then
 	#update rc.local to start scripts on boot
-	S0="sleep 10"
-	S1="sudo -H -u nvidia /bin/bash -c '/home/nvidia/companion/scripts/autostart_mavproxy.sh'"
-	S2="sudo -H -u nvidia /bin/bash -c '/home/nvidia/companion/scripts/autostart_gstreamer.sh'"
-	
-	sudo perl -pe "s%^exit 0%$S0\\n\\nexit 0%" -i /etc/rc.local
-	sudo perl -pe "s%^exit 0%$S1\\n\\nexit 0%" -i /etc/rc.local
-	sudo perl -pe "s%^exit 0%$S2\\n\\nexit 0%" -i /etc/rc.local
+	S1="sleep 10"
+	S2="sudo -H -u nvidia /bin/bash -c '/home/nvidia/companion/scripts/autostart_mavproxy.sh'"
+	S3="sudo -H -u nvidia /bin/bash -c '/home/nvidia/companion/scripts/autostart_gstreamer.sh'"
+
+	sudo sed -i -e "\%$S1%d" \
+	-e "\%$S2%d" \
+	-e "\%$S3%d" \
+	-e "0,/^[^#]*exit 0/s%%$S1\n$S2\n$S3\n&%" \
+	/etc/rc.local
 	
 	#create symbolic link for pixhawk in /dev
 	sudo sh -c "echo 'SUBSYSTEM==\"tty\", ATTRS{idVendor}==\"26ac\", ATTRS{idProduct}==\"0011\", SYMLINK+=\"pixhawk\"' > /etc/udev/rules.d/99-usb-serial.rules"
 	sudo udevadm trigger
 
 	#setup static ip address 192.168.2.2
-	sudo echo "" >> /etc/network/interfaces
-	sudo echo "## ROV direct connection" >> /etc/network/interfaces
-	sudo echo "auto eth0" >> /etc/network/interfaces
-	sudo echo "iface eth0 inet static" >> /etc/network/interfaces
-	sudo echo "    address 192.168.2.2" >> /etc/network/interfaces
-	sudo echo "    netmask 255.255.255.0" >> /etc/network/interfaces
+	sudo sh -c "echo '\n' >> /etc/network/interfaces"
+	sudo_update_file "## ROV direct connection" /etc/network/interfaces
+	sudo_update_file "auto eth0" /etc/network/interfaces
+	sudo_update_file "iface eth0 inet static" /etc/network/interfaces
+	sudo_update_file "    address 192.168.2.2" /etc/network/interfaces
+	sudo_update_file "    netmask 255.255.255.0" /etc/network/interfaces
 
 	#install ros
 	$HOME/companion/scripts/install_ros.sh
