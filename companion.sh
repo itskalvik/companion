@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -e
-
 #Make sure script is not run as root user
 if [ "$UID" = "0" ];then
 	echo "Root privileges are not required for running companion."
@@ -20,7 +18,7 @@ if [ "$1" != "update" ] && [ "$1" != "install" ];then
 
 	bold=$(tput bold)
 	normal=$(tput sgr0)
-	
+
 	echo "${bold}NAME${normal}"
 	echo -e "\tcompanion.sh - Package to setup Nvidia Jetson TX1/TX2 as companion \n\tboard for Pixhawk."
 	echo ""
@@ -33,10 +31,10 @@ if [ "$1" != "update" ] && [ "$1" != "install" ];then
 	echo "${bold}update${normal}"
 	echo -e "\tUsed to update all packages needed to run the jetson as a companion\n\tboard. It also updates the packages built from source if any changes\n\twere made to the remote repo"
 	echo ""
-	
+
 	exit 0
 fi
-	
+
 #Function to update file if changes are not there
 update_file(){
 	grep "$1" $2
@@ -93,13 +91,13 @@ fi
 
 #run only if update flag was not set
 if [ "$1" != "update" ]; then
-	#Remove liberoffice 
+	#Remove liberoffice
 	sudo apt-get purge libreoffice-* -y
 fi
 
 #update and upgrade
 sudo apt-get update
-sudo apt-get upgrade -y 
+sudo apt-get upgrade -y
 
 #run only if update flag was not set
 if [ "$1" != "update" ]; then
@@ -114,7 +112,7 @@ if [ "$1" != "update" ]; then
 	sudo apt-get install -y python-dev python-opencv python-pip python-libxml2  python-wxgtk3.0 python-matplotlib python-pygame
 	sudo apt-get install -y python-setuptools python-dev build-essential
 	sudo apt-get install -y libxml2-dev libxslt1-dev
-	
+
 	sudo -H pip install pip -U
 	sudo -H pip install future
 	sudo -H pip install pyserial -U
@@ -161,7 +159,7 @@ if [ "$1" != "update" ]; then
 	-e "\%$S3%d" \
 	-e "0,/^[^#]*exit 0/s%%$S1\n$S2\n$S3\n&%" \
 	/etc/rc.local
-	
+
 	#create symbolic link for pixhawk in /dev
 	sudo sh -c "echo 'SUBSYSTEM==\"tty\", ATTRS{idVendor}==\"26ac\", ATTRS{idProduct}==\"0011\", SYMLINK+=\"pixhawk\"' > /etc/udev/rules.d/99-usb-serial.rules"
 	sudo udevadm trigger
