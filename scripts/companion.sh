@@ -179,3 +179,7 @@ fi
 
 sudo apt-get autoremove -y
 sudo apt-get autoclean -y
+
+#Disable gui
+sudo systemctl disable lightdm.service
+sudo chmod -x /usr/sbin/lightdm
