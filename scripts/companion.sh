@@ -183,3 +183,6 @@ sudo apt-get autoclean -y
 #Disable gui
 sudo systemctl disable lightdm.service
 sudo chmod -x /usr/sbin/lightdm
+
+#Restart Jetson
+sudo shutdown -r now
